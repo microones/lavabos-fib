@@ -1,8 +1,7 @@
-import bd from "../lib/bd"
-
+import { prisma } from "@/lib/prisma"
 import fs from "fs/promises"
 import path from "path"
-import type { Frase, Idioma } from "@prisma/client"
+import type { Frase, Idioma } from "@/lib/prisma/client"
 
 export async function getFrases(): Promise<Frase[]> {
   return prisma.frase.findMany({
@@ -45,7 +44,6 @@ export async function bulkInsertFrasesFromFile(
   const arr = JSON.parse(raw) as NewFrase[]
   const { count } = await prisma.frase.createMany({
     data: arr,
-    skipDuplicates: true,
   })
   return { count }
 }

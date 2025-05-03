@@ -1,40 +1,29 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from "next/link"
 
 export default function Home() {
+  const items = [
+    { href: "/frases", label: "Frases" },
+    { href: "/ressenyes", label: "Ressenyes" },
+    { href: "/imatges", label: "Galeria d'imatges" },
+    { href: "/about", label: "About" },
+  ]
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-6xl font-bold text-center">Lavabos FIB</h1>
-      <Image
-        src="/img/logo_lavabos-fib.png"
-        alt="Logo Lavabos FIB"
-        width={200}
-        height={200}
-        priority
-        className="mt-8"
-      />
-      <div className="mt-8 flex flex-col items-center justify-center space-y-4 md:flex-row md:space-x-4 md:space-y-0">
-        <Link href="/frases">
-          <button className="w-40 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center">
-            Frases
-          </button>
-        </Link>
-        <Link href="/ressenyes">
-          <button className="w-40 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center">
-            Ressenyes
-          </button>
-        </Link>
-        <Link href="/imatges">
-          <button className="w-40 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center">
-            Galeria d'imatges
-          </button>
-        </Link>
-        <Link href="/about">
-          <button className="w-40 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-center">
-            About
-          </button>
-        </Link>
+    <main className="flex min-h-screen flex-col items-center justify-start p-8 space-y-8">
+      <p className="text-xl text-center">
+        *introduir frase divertida sobre lavabos aquí*
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+        {items.map(({ href, label }) => (
+          <Link
+            key={href}
+            href={href}
+            className="bg-white shadow-md hover:shadow-xl rounded-none p-6 text-center text-lg font-semibold transition-all duration-200 flex items-center justify-center"
+          >
+            <span>{label}</span>
+          </Link>
+        ))}
       </div>
     </main>
-  );
+  )
 }
