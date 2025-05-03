@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma"
-import type { Ressenya, Lavabo } from "@/lib/prisma/client"
+import type { Lavabo, Ressenya } from "@/lib/prisma/client"
 
 export type NewRessenya = {
   contingut: string
@@ -30,3 +30,19 @@ export async function getLatestRessenyes(
       include: { lavabo: true },
     })
   }
+
+export async function getAllLavabosIds(): Promise<number[]> {
+  const lavabos = await prisma.lavabo.findMany({
+    select: { id: true },
+  })
+  return lavabos.map((l) => l.id)
+}
+
+export async function getLavaboById(
+  id: number
+): Promise<(Lavabo & { ressenyes: Ressenya[] }) | null> {
+  return prisma.lavabo.findUnique({
+    where: { id },
+    include: { ressenyes: { orderBy: { data: "desc" } } },
+  })
+}
