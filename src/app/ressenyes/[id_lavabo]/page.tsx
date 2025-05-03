@@ -18,9 +18,8 @@ export async function generateStaticParams(): Promise<Params[]> {
   return ids.map((id) => ({ id_lavabo: id.toString() }))
 }
 
-export default async function LavaboPage({
-  params,
-}: { params: Params }) {
+export default async function LavaboPage(props: { params: Promise<Params> }) {
+  const params = await props.params;
   const id = Number(params.id_lavabo)
   const lb = await getLavaboById(id)
   if (!lb) return notFound()
