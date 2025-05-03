@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function AboutPage() {
     return (
         <main className="flex min-h-screen flex-col items-start justify-start p-8 space-y-4">
-            <h1 className="text-6xl font-bold text-center">About</h1>
+            <h1 className="text-3xl font-bold text-center mb-4 mx-auto">About</h1>
             <p className="text-lg text-center">
                 BD de lavabos de la FIB, per i per a FIBers.
             </p>
@@ -61,7 +61,7 @@ export default function AboutPage() {
             <div></div>
 
             <p className="text-lg text-center">
-                Suggeriments a{" "}
+                Suggeriments i aportacions a{" "}
                 <a
                     href="mailto:lavabos-fib@microones.cat"
                     className="text-blue-500 underline"
@@ -72,6 +72,17 @@ export default function AboutPage() {
 
             <p className="text-lg text-center">
                 Fet amb 💩 i 🧻 pels passadissos de l'A5 durant la HackUPC 2025.
+            </p>
+
+            <p className="text-lg text-center">
+                Codi font disponible en el {" "}
+                <a
+                    href="https://github.com/microones/lavabos-fib"
+                    className="text-blue-500 underline"
+                >
+                    repositori del projecte
+                </a>
+                .
             </p>
         </main>
     );

@@ -7,7 +7,7 @@ export default async function FrasesPage() {
 
   return (
     <div className="p-8 overflow-auto">
-      <h1 className="text-3xl font-bold mb-4">Llista de Frases</h1>
+      <h1 className="text-3xl font-bold text-center mb-4 mx-auto">Llista de Frases</h1>
       <FrasesTable frases={frases} className="shadow rounded" />
     </div>
   );
