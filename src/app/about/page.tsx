@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export default function About() {
+export default function AboutPage() {
     return (
         <main className="flex min-h-screen flex-col items-start justify-start p-8 space-y-4">
             <h1 className="text-6xl font-bold text-center">About</h1>
