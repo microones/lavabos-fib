@@ -1,16 +1,28 @@
 import { notFound } from "next/navigation"
-import { getLavabosWithRessenyes, insertRessenya, NewRessenya } from "@/actions/ressenyes"
+import {
+  getLavaboById,
+  insertRessenya,
+  NewRessenya,
+  getAllLavabosIds,
+} from "@/actions/ressenyes"
 import type { Ressenya } from "@/lib/prisma/client"
 
-interface Params { params: Promise<{ id_lavabo: string }> }
+interface Params { id_lavabo: string }
 
 export const revalidate = 0
 
-export default async function LavaboPage(props: Params) {
-  const params = await props.params;
+// Aquest helper genera els params per a `next export`
+export async function generateStaticParams(): Promise<Params[]> {
+  // Agafa només els IDs dels lavabos
+  const ids = await getAllLavabosIds()
+  return ids.map((id) => ({ id_lavabo: id.toString() }))
+}
+
+export default async function LavaboPage({
+  params,
+}: { params: Params }) {
   const id = Number(params.id_lavabo)
-  const lbs = await getLavabosWithRessenyes()
-  const lb = lbs.find((x) => x.id === id)
+  const lb = await getLavaboById(id)
   if (!lb) return notFound()
 
   return (
