@@ -62,6 +62,7 @@ model Comentari {
   frase      Frase     @relation(fields: [fraseId], references: [id])
   fraseId    Int
   data       DateTime  @default(now())
+  autor      String?
   resposta   Int?
 
   createdAt  DateTime  @default(now())
@@ -70,6 +71,7 @@ model Comentari {
 
 model Ressenya {
   id         Int       @id @default(autoincrement())
+  autor      String?
   contingut  String
   puntuacio  Int
   data       DateTime  @default(now())
