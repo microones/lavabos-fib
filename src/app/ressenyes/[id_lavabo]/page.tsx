@@ -2,11 +2,12 @@ import { notFound } from "next/navigation"
 import { getLavabosWithRessenyes, insertRessenya, NewRessenya } from "@/actions/ressenyes"
 import type { Ressenya } from "@/lib/prisma/client"
 
-interface Params { params: { id_lavabo: string } }
+interface Params { params: Promise<{ id_lavabo: string }> }
 
 export const revalidate = 0
 
-export default async function LavaboPage({ params }: Params) {
+export default async function LavaboPage(props: Params) {
+  const params = await props.params;
   const id = Number(params.id_lavabo)
   const lbs = await getLavabosWithRessenyes()
   const lb = lbs.find((x) => x.id === id)
