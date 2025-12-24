@@ -13,7 +13,7 @@ function unauthorized() {
   })
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   // només protegem /admin i subrutes
   if (req.nextUrl.pathname.startsWith("/admin")) {
     const auth = req.headers.get("authorization")
