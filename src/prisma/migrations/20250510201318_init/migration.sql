@@ -1,0 +1,49 @@
+-- CreateTable
+CREATE TABLE "Lavabo" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "edifici" TEXT NOT NULL,
+    "planta" TEXT NOT NULL,
+    "genere" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Frase" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "contingut" TEXT NOT NULL,
+    "idioma" TEXT NOT NULL,
+    "any" INTEGER NOT NULL,
+    "resposta" INTEGER,
+    "fitxerImg" TEXT,
+    "lavaboId" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Frase_lavaboId_fkey" FOREIGN KEY ("lavaboId") REFERENCES "Lavabo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Comentari" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "contingut" TEXT NOT NULL,
+    "fraseId" INTEGER NOT NULL,
+    "data" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "autor" TEXT,
+    "resposta" INTEGER,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Comentari_fraseId_fkey" FOREIGN KEY ("fraseId") REFERENCES "Frase" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Ressenya" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "autor" TEXT,
+    "contingut" TEXT NOT NULL,
+    "puntuacio" INTEGER NOT NULL,
+    "data" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lavaboId" INTEGER NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL,
+    CONSTRAINT "Ressenya_lavaboId_fkey" FOREIGN KEY ("lavaboId") REFERENCES "Lavabo" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);

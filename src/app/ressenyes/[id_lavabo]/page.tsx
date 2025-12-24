@@ -37,7 +37,7 @@ export default async function LavaboPage(props: { params: Promise<Params> }) {
           lavaboId: id,
           contingut: formData.get("contingut") as string,
           puntuacio: Number(formData.get("puntuacio")),
-          reviewer: reviewerInput || null,
+          autor: reviewerInput || null,
         }
         await insertRessenya(data)
       }}

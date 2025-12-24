@@ -5,7 +5,7 @@ export type NewRessenya = {
   contingut: string
   puntuacio: number
   lavaboId: number
-  reviewer?: string | null
+  autor?: string | null
 }
 
 export async function getLavabosWithRessenyes(): Promise<
