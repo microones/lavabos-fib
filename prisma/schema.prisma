@@ -1,82 +1,85 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/prisma/client"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
-enum Genere { 
-  masculi
-  femeni
-  mixt 
-}
-enum Idioma {
-  catala
-  castella
-  catala_i_castella
-  angles
-  frances
-}
+// DEFINICIÓ DE MODELS
 
 model Lavabo {
-  id         Int         @id @default(autoincrement())
-  edifici    String
-  planta     String
-  genere     Genere
+  id      Int    @id @default(autoincrement())
+  edifici String
+  planta  String
+  sexe    Sexe   @default(NEUTRE)
 
-  frases     Frase[]     
-  ressenyes  Ressenya[]
+  // Relacions (Això no són columnes reals a la BD, són virtuals per a Prisma)
+  imatges   Imatge[]
+  frases    Frase[]
+  ressenyes Ressenya[]
+}
 
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+model Imatge {
+  id  Int    @id @default(autoincrement())
+  any Int
+  url String // Necessites guardar on està la imatge (ex: path o URL de Cloudinary)
+
+  // Clau forana cap a Lavabo
+  lavaboId Int
+  lavabo   Lavabo @relation(fields: [lavaboId], references: [id], onDelete: Cascade)
+
+  // Relació cap a Frases (Una imatge pot contenir varies frases)
+  frases Frase[]
 }
 
 model Frase {
-  id         Int          @id @default(autoincrement())
-  contingut  String
-  idioma     Idioma
-  any        Int
-  resposta   Int?
-  fitxerImg  String?
-  lavabo     Lavabo       @relation(fields: [lavaboId], references: [id])
-  lavaboId   Int
+  id        Int     @id @default(autoincrement())
+  contingut String? // Pot ser null si només és un dibuix
+  dibuix    Boolean @default(false)
+  idioma    String? // Ho deixem com String simple. Si vols array, depèn del motor de BD (Postgres ho permet)
 
+  // Relació: Pertany a un Lavabo (Obligatori)
+  lavaboId Int
+  lavabo   Lavabo @relation(fields: [lavaboId], references: [id], onDelete: Cascade)
+
+  // Relació: Apareix en una Imatge (Opcional, potser no n'hi ha foto encara)
+  imatgeId Int?
+  imatge   Imatge? @relation(fields: [imatgeId], references: [id])
+
+  // Relació: És resposta d'una altra frase (Self-relation)
+  respostaId Int? // L'ID de la frase pare
+  pare       Frase?  @relation("FilDeConversa", fields: [respostaId], references: [id]) // La frase original
+  respostes  Frase[] @relation("FilDeConversa") // Les frases que responen a aquesta
+
+  // Relacions externes
   comentaris Comentari[]
-
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
 }
 
 model Comentari {
-  id         Int       @id @default(autoincrement())
-  contingut  String
-  frase      Frase     @relation(fields: [fraseId], references: [id])
-  fraseId    Int
-  data       DateTime  @default(now())
-  autor      String?
-  resposta   Int?
+  id        Int      @id @default(autoincrement())
+  contingut String
+  data      DateTime @default(now())
 
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  fraseId Int
+  frase   Frase @relation(fields: [fraseId], references: [id], onDelete: Cascade)
 }
 
 model Ressenya {
-  id         Int       @id @default(autoincrement())
-  autor      String?
-  contingut  String
-  puntuacio  Int
-  data       DateTime  @default(now())
-  lavabo     Lavabo    @relation(fields: [lavaboId], references: [id])
-  lavaboId   Int
-  
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  contingut String
+  puntuacio Int // validar en el backend que sigui de 1 a 5
+  data      DateTime @default(now())
+
+  lavaboId Int
+  lavabo   Lavabo @relation(fields: [lavaboId], references: [id], onDelete: Cascade)
+}
+
+// ENUMS
+enum Sexe {
+  MASCULI
+  FEMENI
+  NEUTRE
 }
