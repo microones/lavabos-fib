@@ -20,6 +20,9 @@ model Lavabo {
   imatges   Imatge[]
   frases    Frase[]
   ressenyes Ressenya[]
+
+  createdAt DateTime @default(now())      // Es guarda sol quan crees
+  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
 }
 
 model Imatge {
@@ -33,6 +36,9 @@ model Imatge {
 
   // Relació cap a Frases (Una imatge pot contenir varies frases)
   frases Frase[]
+
+  createdAt DateTime @default(now())      // Es guarda sol quan crees
+  updatedAt DateTime @updatedAt @default(now())           // Prisma l'actualitza sol quan edites
 }
 
 model Frase {
@@ -56,6 +62,9 @@ model Frase {
 
   // Relacions externes
   comentaris Comentari[]
+
+  createdAt DateTime @default(now())      // Es guarda sol quan crees
+  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
 }
 
 model Comentari {
@@ -65,6 +74,9 @@ model Comentari {
 
   fraseId Int
   frase   Frase @relation(fields: [fraseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())      // Es guarda sol quan crees
+  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
 }
 
 model Ressenya {
@@ -75,6 +87,9 @@ model Ressenya {
 
   lavaboId Int
   lavabo   Lavabo @relation(fields: [lavaboId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())      // Es guarda sol quan crees
+  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
 }
 
 // ENUMS
