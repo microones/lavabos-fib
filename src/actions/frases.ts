@@ -2,16 +2,16 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { Prisma } from '../../generated/prisma';
 
 const fraseBasica = {
   id: true,
   contingut: true,
   dibuix: true,
   createdAt: true, // Si l'has afegit, sinó treu-ho
-  lavabo: { select: { edifici: true, sexe: true } }, // Només info bàsica de l'autor/lloc
+  lavabo: { select: { edifici: true, genere: true } }, // Només info bàsica de l'autor/lloc
   imatge: { select: { url: true } }
 };
 
@@ -51,7 +51,7 @@ export type FraseAmbRelacions = Prisma.PromiseReturnType<typeof getFrases>[numbe
 
 export async function getLavabosOptions() {
   return await prisma.lavabo.findMany({
-    select: { id: true, edifici: true, planta: true, sexe: true },
+    select: { id: true, edifici: true, planta: true, genere: true },
     orderBy: [{ edifici: 'asc' }, { planta: 'asc' }]
   });
 }

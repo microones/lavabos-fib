@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db"
-import type { Lavabo, Ressenya } from "@/lib/prisma/client"
+import { Lavabo, Ressenya } from "../../generated/prisma"
 
 export type NewRessenya = {
   contingut: string

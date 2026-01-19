@@ -13,7 +13,7 @@ const FilVisualitzador = ({ frase, nivell = 0 }: { frase: any, nivell?: number }
       <div className="bg-white p-3 rounded border border-gray-200 shadow-sm text-sm">
         <div className="flex justify-between items-start mb-1">
           <span className="font-bold text-gray-700 text-xs">
-            {frase.lavabo.edifici} ({frase.lavabo.sexe})
+            {frase.lavabo.edifici} ({frase.lavabo.genere})
           </span>
           <span className="text-gray-400 text-[10px] font-mono">ID: {frase.id}</span>
         </div>
@@ -101,7 +101,7 @@ export default function FrasesTable({ frases, className }: FrasesTableProps) {
 
                   <td className="py-4 pl-2 text-sm align-top whitespace-nowrap">
                     <div className="font-bold text-gray-900">{f.lavabo.edifici}</div>
-                    <div className="text-gray-500 text-xs">Planta {f.lavabo.planta} • {f.lavabo.sexe}</div>
+                    <div className="text-gray-500 text-xs">Planta {f.lavabo.planta} • {f.lavabo.genere}</div>
                     <Link href={`/lavabos/${f.lavaboId}`} className="text-[10px] text-blue-500 hover:underline block mt-1">
                       Veure lavabo
                     </Link>
@@ -159,9 +159,9 @@ export default function FrasesTable({ frases, className }: FrasesTableProps) {
                         </h4>
                         
                         <div className="flex flex-col gap-4">
-                          {f.respostes.map((resposta) => (
+                            {f.respostes.map((resposta: FraseAmbRelacions) => (
                              <FilVisualitzador key={resposta.id} frase={resposta} />
-                          ))}
+                            ))}
                         </div>
                       </div>
                     </td>
