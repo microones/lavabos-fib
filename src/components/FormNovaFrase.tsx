@@ -7,7 +7,7 @@ type LavaboOption = {
   id: number;
   edifici: string;
   planta: string;
-  sexe: "MASCULI" | "FEMENI" | "NEUTRE";
+  genere: "MASCULI" | "FEMENI" | "NEUTRE";
 };
 
 export default function FormNovaFrase({ lavabos }: { lavabos: LavaboOption[] }) {
@@ -28,7 +28,7 @@ export default function FormNovaFrase({ lavabos }: { lavabos: LavaboOption[] }) 
           <option value="">-- Selecciona el lavabo --</option>
           {lavabos.map((l) => (
             <option key={l.id} value={l.id}>
-              Edifici {l.edifici} - Planta {l.planta} ({l.sexe})
+              Edifici {l.edifici} - Planta {l.planta} ({l.genere})
             </option>
           ))}
         </select>

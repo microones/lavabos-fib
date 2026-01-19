@@ -17,7 +17,7 @@ export default async function LavabosPage() {
             <h2 className="font-semibold text-lg">Edifici {lavabo.edifici}</h2>
             <p>Planta: {lavabo.planta}</p>
             <p className="text-sm text-gray-500 uppercase tracking-wide">
-              Gènere: {lavabo.sexe}
+              Gènere: {lavabo.genere}
             </p>
             <a 
               href={`/lavabos/${lavabo.id}`} 

@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useEffect, Fragment } from "react"
+import { useState, useEffect } from "react"
 
 export type BuildingImages = {
   building: string
