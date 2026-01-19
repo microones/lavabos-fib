@@ -11,6 +11,7 @@ export default function AdminFrasesManager({ initialFrases, lavabos }: any) {
   // Estats per importació massiva
   const [bulkText, setBulkText] = useState("");
   const [bulkLavabo, setBulkLavabo] = useState(lavabos[0]?.id || "");
+  const [bulkLanguage, setBulkLanguage] = useState("ca");
 
   // Estats per SQL
   const [sqlQuery, setSqlQuery] = useState("SELECT * FROM \"Frase\" LIMIT 5;");
@@ -28,7 +29,12 @@ export default function AdminFrasesManager({ initialFrases, lavabos }: any) {
     await updateFrase(id, data);
     setEditingId(null);
     alert("Frase actualitzada!");
-    // Idealment recarregaries les dades aquí o usaries router.refresh()
+    
+    // Actualitzar la taula després de l'actualització
+    const updatedFrases = frases.map((frase: any) => 
+      frase.id === id ? { ...frase, ...data } : frase
+    );
+    setFrases(updatedFrases);
   };
 
   const handleDelete = async (id: number) => {
@@ -66,7 +72,10 @@ export default function AdminFrasesManager({ initialFrases, lavabos }: any) {
       {/* TABS HEADER */}
       <div className="flex border-b border-gray-200 bg-gray-50">
         <button 
-          onClick={() => setActiveTab('visual')}
+          onClick={() => {
+            setActiveTab('visual');
+            window.location.reload(); // Actualitzar la pàgina
+          }}
           className={`px-6 py-4 font-bold text-sm ${activeTab === 'visual' ? 'bg-white text-blue-600 border-t-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
         >
           Editor de frases
@@ -143,35 +152,57 @@ export default function AdminFrasesManager({ initialFrases, lavabos }: any) {
         {activeTab === 'massiu' && (
           <div className="max-w-2xl">
             <h3 className="font-bold text-lg mb-4">Afegir moltes frases de cop</h3>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Selecciona el Lavabo Destí</label>
-              <select 
-                value={bulkLavabo} 
-                onChange={(e) => setBulkLavabo(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-              >
-                {lavabos.map((l: any) => (
-                  <option key={l.id} value={l.id}>{l.edifici} - {l.planta} ({l.genere})</option>
-                ))}
-              </select>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Selector de Lavabo */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Selecciona el Lavabo Destí</label>
+                <select 
+                  value={bulkLavabo} 
+                  onChange={(e) => setBulkLavabo(e.target.value)}
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                >
+                  {lavabos.map((l: any) => (
+                    <option key={l.id} value={l.id}>{l.edifici} - {l.planta} ({l.genere})</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Selector d'Idioma */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Idioma de les frases</label>
+                <select 
+                  value={bulkLanguage} 
+                  onChange={(e) => setBulkLanguage(e.target.value)}
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                >
+                  <option value="ca">Català</option>
+                  <option value="es">Castellà</option>
+                  <option value="en">Anglès</option>
+                </select>
+              </div>
             </div>
+
+            {/* Textarea */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700">Frases (una per línia)</label>
               <textarea 
                 rows={10} 
                 className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md font-mono p-2"
-                placeholder="Aquí va una frase
-Aquí en va una altra
-I una tercera..."
+                placeholder={"Aquí va una frase\nAquí en va una altra\nI una tercera..."}
                 value={bulkText}
                 onChange={(e) => setBulkText(e.target.value)}
               />
+              <p className="mt-2 text-xs text-gray-500 italic">
+                * Cada línia es guardarà com una frase independent amb l'idioma seleccionat a dalt.
+              </p>
             </div>
+
             <button 
               onClick={handleBulkImport}
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none w-full justify-center md:w-auto transition-colors"
             >
-              Processar Importació
+              Processar {bulkText.split('\n').filter(l => l.trim()).length} frases
             </button>
           </div>
         )}
@@ -180,13 +211,13 @@ I una tercera..."
         {activeTab === 'sql' && (
           <div className="bg-gray-900 p-4 rounded-lg text-green-400 font-mono text-sm shadow-2xl">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-500 text-xs">PostgreSQL</span>
+              <span className="text-gray-300 text-xs">PostgreSQL</span>
             </div>
             
             <textarea 
               value={sqlQuery}
               onChange={(e) => setSqlQuery(e.target.value)}
-              className="w-full bg-gray-800 text-black border border-gray-700 p-3 rounded mb-3 focus:outline-none focus:border-green-500 font-mono"
+              className="w-full bg-gray-800 text-white border border-gray-700 p-3 rounded mb-3 focus:outline-none focus:border-green-500 font-mono"
               rows={6}
               placeholder="SELECT * FROM..."
               spellCheck={false}
@@ -196,7 +227,7 @@ I una tercera..."
               <button 
                 onClick={handleRunSQL}
                 disabled={isLoading}
-                className={`bg-green-700 text-black px-4 py-2 rounded font-bold transition flex items-center gap-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'}`}
+                className={`bg-green-700 text-white px-4 py-2 rounded font-bold transition flex items-center gap-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'}`}
               >
                 {isLoading ? 'Executant...' : '▶ Executar Query'}
               </button>

@@ -45,7 +45,6 @@ export async function bulkImportFrases(text: string, lavaboId: number) {
     contingut: l.trim(),
     lavaboId: lavaboId,
     dibuix: false,
-    idioma: 'ca' // per defecte
   }));
 
   try {
