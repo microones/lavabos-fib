@@ -25,21 +25,21 @@ export default function AboutPage() {
                         uni: "Universitat Politècnica de Catalunya",
                     },
                     {
+                        href: "https://github.com/mcosta-b/",
+                        src: "/img/about/marc-costa.jpeg",
+                        alt: "Marc Costa Brusco",
+                        name: "Marc Costa Brusco",
+                        uni: "Universitat Politècnica de Catalunya",
+                    },
+                    {
                         href: "https://github.com/AuraHan5/",
                         src: "/img/about/aura-han.png",
                         alt: "Aura Han Ruiz Sánchez",
                         name: "Aura Han Ruiz Sánchez",
                         uni: "Universitat Politècnica de Catalunya",
                     },
-                    {
-                        href: "https://github.com/abeel987/",
-                        src: "/img/about/abel-aymerich.png",
-                        alt: "Abel Aymerich",
-                        name: "Abel Aymerich",
-                        uni: "Universitat Politècnica de Catalunya",
-                    },
                 ].map((dev) => (
-                    <div key={dev.href} className="flex items-center space-x-4">
+                    <div key={dev.href} className="flex items-start space-x-4">
                         <Image
                             src={dev.src}
                             alt={dev.alt}
@@ -50,9 +50,48 @@ export default function AboutPage() {
                         <div className="flex flex-col">
                             <span className="text-lg font-medium">{dev.name}</span>
                             <span className="text-sm text-gray-500">{dev.uni}</span>
-                            <Link href={dev.href} className="text-sm text-blue-500 hover:underline">
-                                GitHub
+                            <Link 
+                                href={dev.href} 
+                                className="text-sm text-blue-500 hover:underline mt-2 inline-flex items-center gap-1"
+                            >
+                                <span>GitHub</span>
                             </Link>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <h2 className="text-2xl font-semibold text-center mt-8">
+                Col·laboradors
+            </h2>
+            <div className="flex flex-col md:flex-row items-start justify-center space-y-8 md:space-y-0 md:space-x-12">
+                {[
+                    {
+                        href: "https://github.com/abeel987/",
+                        src: "/img/about/abel-aymerich.png",
+                        alt: "Abel Aymerich",
+                        name: "Abel Aymerich",
+                        uni: "Universitat Politècnica de Catalunya",
+                    },
+                    {
+                        href: "https://github.com/ddanor/",
+                        src: "/img/about/ada-pages.jpeg",
+                        alt: "Ada Pagès Plaja",
+                        name: "Ada Pagès Plaja",
+                        uni: "Universitat Politècnica de Catalunya",
+                    },
+                ].map((dev) => (
+                    <div key={dev.href} className="flex items-start space-x-4">
+                        <Image
+                            src={dev.src}
+                            alt={dev.alt}
+                            width={80}
+                            height={80}
+                            className="object-cover w-20 h-20"
+                        />
+                        <div className="flex flex-col">
+                            <span className="text-lg font-medium">{dev.name}</span>
+                            <span className="text-sm text-gray-500">{dev.uni}</span>
                         </div>
                     </div>
                 ))}
