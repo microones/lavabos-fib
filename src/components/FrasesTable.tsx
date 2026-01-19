@@ -66,7 +66,7 @@ export default function FrasesTable({ frases, className }: FrasesTableProps) {
   if (!frases || frases.length === 0) return <div className="p-4 text-center text-gray-500">Sense dades.</div>;
 
   return (
-    <div className={`overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg bg-white ${className}`}>
+    <div className={`overflow-x-auto border border-gray-200 rounded-md bg-white ${className}`}>
       <table className="min-w-full divide-y divide-gray-300">
         <thead className="bg-gray-100">
           <tr>
@@ -77,7 +77,7 @@ export default function FrasesTable({ frases, className }: FrasesTableProps) {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white">
-          {frases.map((f) => {
+          {frases.filter((f) => f.pare === null).map((f) => {
             const hasReplies = f.respostes && f.respostes.length > 0;
             const isExpanded = expandedRows.has(f.id);
 
@@ -159,7 +159,7 @@ export default function FrasesTable({ frases, className }: FrasesTableProps) {
                         </h4>
                         
                         <div className="flex flex-col gap-4">
-                            {f.respostes.map((resposta: FraseAmbRelacions) => (
+                            {f.respostes.map((resposta) => (
                              <FilVisualitzador key={resposta.id} frase={resposta} />
                             ))}
                         </div>
