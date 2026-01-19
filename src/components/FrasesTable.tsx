@@ -101,7 +101,7 @@ export default function FrasesTable({ frases, className }: FrasesTableProps) {
 
                   <td className="py-4 pl-2 text-sm align-top whitespace-nowrap">
                     <div className="font-bold text-gray-900">{f.lavabo.edifici}</div>
-                    <div className="text-gray-500 text-xs">Planta {f.lavabo.planta} • {f.lavabo.genere}</div>
+                    <div className="text-gray-500 text-xs">{f.lavabo.planta} • {f.lavabo.genere}</div>
                     <Link href={`/lavabos/${f.lavaboId}`} className="text-[10px] text-blue-500 hover:underline block mt-1">
                       Veure lavabo
                     </Link>
@@ -121,13 +121,6 @@ export default function FrasesTable({ frases, className }: FrasesTableProps) {
                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>
                          Veure {f.respostes.length} respostes
                        </button>
-                    )}
-
-                    {/* Badge d'idioma */}
-                    {f.idioma && (
-                      <span className="mt-2 inline-block px-1.5 py-0.5 text-[10px] uppercase text-gray-400 border border-gray-200 rounded ml-2">
-                        {f.idioma}
-                      </span>
                     )}
                   </td>
 

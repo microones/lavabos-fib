@@ -10,8 +10,8 @@ const fraseBasica = {
   id: true,
   contingut: true,
   dibuix: true,
-  createdAt: true, // Si l'has afegit, sinó treu-ho
-  lavabo: { select: { edifici: true, genere: true } }, // Només info bàsica de l'autor/lloc
+  createdAt: true, 
+  lavabo: { select: { edifici: true, genere: true } }, 
   imatge: { select: { url: true } }
 };
 
