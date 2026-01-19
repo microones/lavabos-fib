@@ -13,21 +13,77 @@ datasource db {
   provider = "postgresql"
 }
 
-// DEFINICIÓ DE MODELS
+// BETTER AUTH
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  admin    Boolean @default(false)
+  username String  @unique
+
+  sessions Session[]
+  accounts Account[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+}
+
+// DEFINICIÓ DE MODELS lavabos-fib
 
 model Lavabo {
   id      Int    @id @default(autoincrement())
   edifici String
   planta  String
-  genere  Genere   @default(NEUTRE)
+  genere  Genere @default(NEUTRE)
 
   // Relacions (Això no són columnes reals a la BD, són virtuals per a Prisma)
   imatges   Imatge[]
   frases    Frase[]
   ressenyes Ressenya[]
 
-  createdAt DateTime @default(now())      // Es guarda sol quan crees
-  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
+  createdAt DateTime @default(now()) // Es guarda sol quan crees
+  updatedAt DateTime @default(now()) @updatedAt // Prisma l'actualitza sol quan edites
 }
 
 model Imatge {
@@ -42,8 +98,8 @@ model Imatge {
   // Relació cap a Frases (Una imatge pot contenir varies frases)
   frases Frase[]
 
-  createdAt DateTime @default(now())      // Es guarda sol quan crees
-  updatedAt DateTime @updatedAt @default(now())           // Prisma l'actualitza sol quan edites
+  createdAt DateTime @default(now()) // Es guarda sol quan crees
+  updatedAt DateTime @default(now()) @updatedAt // Prisma l'actualitza sol quan edites
 }
 
 model Frase {
@@ -68,8 +124,8 @@ model Frase {
   // Relacions externes
   comentaris Comentari[]
 
-  createdAt DateTime @default(now())      // Es guarda sol quan crees
-  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
+  createdAt DateTime @default(now()) // Es guarda sol quan crees
+  updatedAt DateTime @default(now()) @updatedAt // Prisma l'actualitza sol quan edites
 }
 
 model Comentari {
@@ -80,8 +136,8 @@ model Comentari {
   fraseId Int
   frase   Frase @relation(fields: [fraseId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())      // Es guarda sol quan crees
-  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
+  createdAt DateTime @default(now()) // Es guarda sol quan crees
+  updatedAt DateTime @default(now()) @updatedAt // Prisma l'actualitza sol quan edites
 }
 
 model Ressenya {
@@ -93,8 +149,8 @@ model Ressenya {
   lavaboId Int
   lavabo   Lavabo @relation(fields: [lavaboId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())      // Es guarda sol quan crees
-  updatedAt DateTime @updatedAt @default(now())          // Prisma l'actualitza sol quan edites
+  createdAt DateTime @default(now()) // Es guarda sol quan crees
+  updatedAt DateTime @default(now()) @updatedAt // Prisma l'actualitza sol quan edites
 }
 
 // ENUMS
