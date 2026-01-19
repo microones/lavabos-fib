@@ -1,5 +1,5 @@
 // app/lavabos/page.tsx
-import { prisma } from '@/lib/prisma'; // Importem el client que hem configurat
+import { prisma } from '@/lib/db'; // Importem el client que hem configurat
 
 export default async function LavabosPage() {
   // 1. Fem la consulta a la BD (això és codi de servidor, és segur!)

@@ -1,7 +1,12 @@
-// prisma/schema.prisma
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,7 +19,7 @@ model Lavabo {
   id      Int    @id @default(autoincrement())
   edifici String
   planta  String
-  sexe    Sexe   @default(NEUTRE)
+  genere  Genere   @default(NEUTRE)
 
   // Relacions (Això no són columnes reals a la BD, són virtuals per a Prisma)
   imatges   Imatge[]
@@ -93,7 +98,7 @@ model Ressenya {
 }
 
 // ENUMS
-enum Sexe {
+enum Genere {
   MASCULI
   FEMENI
   NEUTRE
