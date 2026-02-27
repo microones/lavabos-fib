@@ -25,6 +25,9 @@ jobs:
       - name: Generate Prisma Client
         run: bun prisma generate
 
+      - name: Create missing directories
+        run: mkdir -p public/img
+
       - name: build check
         run: bun run build
         env:
