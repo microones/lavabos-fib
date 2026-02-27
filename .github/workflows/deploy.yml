@@ -1,0 +1,57 @@
+name: CI/CD Lavabos FIB
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # PRIMER PAS: Comprovar que el codi és correcte (s'executa sempre)
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: build check
+        run: bun run build
+        env:
+          # Aquí posem variables fictícies perquè el build no peti
+          # ja que GitHub no té accés a la teva DB real
+          DATABASE_URL: "postgresql://johndoe:randompassword@localhost:5432/mydb"
+          NEXT_PUBLIC_API_URL: "http://localhost:3000"
+
+  # SEGON PAS: Desplegament real (NOMÉS si el primer pas és OK i estem a MAIN)
+  deploy:
+    needs: test-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTH_KEY }}
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/lavabos-fib
+            git pull origin main
+            bun install
+            bun prisma generate
+            bun prisma migrate deploy
+            bun run build
+            pm2 restart lavabos-fib || pm2 start "bun run start" --name "lavabos-fib"
