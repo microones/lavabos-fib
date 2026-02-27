@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-start p-8 space-y-8">
       <p className="text-xl text-center">
-        *introduir frase divertida sobre lavabos aquí*
+        Benvinguts a lavabos-fib BETA
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
         {items.map(({ href, label }) => (
