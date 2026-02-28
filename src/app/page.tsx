@@ -23,8 +23,8 @@ export default function HomePage() {
             BETA
           </span>
         </h1>
-        <p className="text-[var(--foreground)] text-lg md:text-xl max-w-md mx-auto font-bold drop-shadow-md bg-white/10 backdrop-blur-sm rounded-full px-6 py-2 border border-white/10">
-          La base de dades definitiva per als moments de pau a la facultat.
+        <p className="text-[var(--foreground)] text-lg md:text-l max-w-md mx-auto font-bold drop-shadow-md bg-white/10 backdrop-blur-sm rounded px-6 py-2 border border-white/10">
+          La pàgina que definitivament no necessitaves
         </p>
       </div>
 
