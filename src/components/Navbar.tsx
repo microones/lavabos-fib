@@ -27,7 +27,7 @@ export default function Navbar() {
               lavabos-fib
             </span>
             <span className="text-[10px] font-mono bg-[var(--primary)] px-2 py-0.5 rounded text-white font-bold">
-              BETA
+              ALPHA
             </span>
           </div>
         </Link>
