@@ -1,128 +1,128 @@
+// @/app/about/page.tsx
 import Link from "next/link";
 import Image from "next/image";
 
+interface Person {
+  name: string;
+  src: string;
+  alt?: string;
+  uni: string;
+  href?: string;
+}
+
+const Section = ({ title, people }: { title: string; people: Person[] }) => (
+  <section className="w-full space-y-8 relative z-10">
+    <h2 className="text-2xl font-bold text-[var(--primary)] border-b pb-2 border-[var(--primary)]/10 tracking-tight">
+      {title}
+    </h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {people.map((dev) => (
+        <div
+          key={dev.name}
+          className="glass-card p-5 rounded-2xl flex items-center space-x-6 transition-all duration-300 hover:border-[var(--accent)]/30 group"
+        >
+          {/* Foto circular mitjana i uniforme */}
+          <div className="relative flex-shrink-0 w-[100px] h-[100px]">
+            <Image
+              src={dev.src}
+              alt={dev.name}
+              fill
+              className="rounded-full object-cover border-2 border-[var(--primary)]/10 group-hover:border-[var(--accent)] transition-colors duration-300"
+            />
+          </div>
+
+          <div className="flex flex-col space-y-1">
+            <span className="font-bold text-[var(--foreground)] text-lg leading-tight">
+              {dev.name}
+            </span>
+            <span className="text-xs font-semibold text-[var(--foreground)]/40 uppercase tracking-widest">
+              {dev.uni}
+            </span>
+            {dev.href && (
+              <Link
+                href={dev.href}
+                className="text-xs font-bold text-[var(--accent)] hover:underline pt-1"
+              >
+                GitHub →
+              </Link>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+);
+
 export default function AboutPage() {
-    return (
-        <main className="flex min-h-screen flex-col items-start justify-start p-8 space-y-4">
-            <h1 className="text-3xl font-bold text-center mb-4 mx-auto">About</h1>
-            <p className="text-lg text-center">
-                BD de lavabos de la FIB, per i per a FIBers.
-            </p>
-            <p className="text-lg text-center">
-                En quin lavabo es caga millor? La comunitat respon.
-            </p>
+  return (
+    <main className="min-h-screen w-full bg-[var(--background)]">
+      <div className="max-w-4xl mx-auto px-6 py-20 space-y-16">
+        <header className="text-center space-y-4">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-[var(--foreground)]">
+            Sobre el projecte
+          </h1>
+          <p className="text-lg text-[var(--foreground)]/60 font-medium italic">
+            Quin és el millor lavabo de la FIB? La comunitat respon.
+          </p>
+        </header>
 
-            <h2 className="text-2xl font-semibold text-center mt-8">
-                Idea i desenvolupament
-            </h2>
-            <div className="flex flex-col md:flex-row items-start justify-center space-y-8 md:space-y-0 md:space-x-12">
-                {[
-                    {
-                        href: "https://github.com/microones/",
-                        src: "/img/about/yeray-zalaya.jpeg",
-                        alt: "Yeray Zalaya Domingo",
-                        name: "Yeray Zalaya Domingo",
-                        uni: "Universitat Politècnica de Catalunya",
-                    },
-                    {
-                        href: "https://github.com/mcosta-b/",
-                        src: "/img/about/marc-costa.jpeg",
-                        alt: "Marc Costa Brusco",
-                        name: "Marc Costa Brusco",
-                        uni: "Universitat Politècnica de Catalunya",
-                    },
-                    {
-                        href: "https://github.com/AuraHan5/",
-                        src: "/img/about/aura-han.png",
-                        alt: "Aura Han Ruiz Sánchez",
-                        name: "Aura Han Ruiz Sánchez",
-                        uni: "Universitat Politècnica de Catalunya",
-                    },
-                ].map((dev) => (
-                    <div key={dev.href} className="flex items-start space-x-4">
-                        <Image
-                            src={dev.src}
-                            alt={dev.alt}
-                            width={80}
-                            height={80}
-                            className="object-cover w-20 h-20"
-                        />
-                        <div className="flex flex-col">
-                            <span className="text-lg font-medium">{dev.name}</span>
-                            <span className="text-sm text-gray-500">{dev.uni}</span>
-                            <Link 
-                                href={dev.href} 
-                                className="text-sm text-blue-500 hover:underline mt-2 inline-flex items-center gap-1"
-                            >
-                                <span>GitHub</span>
-                            </Link>
-                        </div>
-                    </div>
-                ))}
-            </div>
+        <div className="space-y-16">
+          <Section
+            title="Idea i desenvolupament"
+            people={[
+              {
+                name: "Yeray Zalaya Domingo",
+                src: "/img/about/yeray-zalaya.jpeg",
+                uni: "Universitat Politècnica de Catalunya",
+                href: "https://github.com/microones/",
+              },
+              {
+                name: "Marc Costa Brusco",
+                src: "/img/about/marc-costa.jpeg",
+                uni: "Universitat Politècnica de Catalunya",
+                href: "https://github.com/mcosta-b/",
+              },
+              {
+                name: "Aura Han Ruiz Sánchez",
+                src: "/img/about/aura-han.png",
+                uni: "Universitat Politècnica de Catalunya",
+                href: "https://github.com/AuraHan5/",
+              },
+            ]}
+          />
 
-            <h2 className="text-2xl font-semibold text-center mt-8">
-                Col·laboradors
-            </h2>
-            <div className="flex flex-col md:flex-row items-start justify-center space-y-8 md:space-y-0 md:space-x-12">
-                {[
-                    {
-                        href: "https://github.com/abeel987/",
-                        src: "/img/about/abel-aymerich.png",
-                        alt: "Abel Aymerich",
-                        name: "Abel Aymerich",
-                        uni: "Universitat Politècnica de Catalunya",
-                    },
-                    {
-                        href: "https://github.com/ddanor/",
-                        src: "/img/about/ada-pages.jpeg",
-                        alt: "Ada Pagès Plaja",
-                        name: "Ada Pagès Plaja",
-                        uni: "Universitat Politècnica de Catalunya",
-                    },
-                ].map((dev) => (
-                    <div key={dev.href} className="flex items-start space-x-4">
-                        <Image
-                            src={dev.src}
-                            alt={dev.alt}
-                            width={80}
-                            height={80}
-                            className="object-cover w-20 h-20"
-                        />
-                        <div className="flex flex-col">
-                            <span className="text-lg font-medium">{dev.name}</span>
-                            <span className="text-sm text-gray-500">{dev.uni}</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
+          <Section
+            title="Col·laboradors"
+            people={[
+              {
+                name: "Abel Aymerich",
+                src: "/img/about/abel-aymerich.png",
+                uni: "Universitat Politècnica de Catalunya",
+                href: "https://github.com/abeel987/",
+              },
+              {
+                name: "Ada Pagès Plaja",
+                src: "/img/about/ada-pages.jpeg",
+                uni: "Universitat Politècnica de Catalunya",
+                href: "https://github.com/ddanor/",
+              },
+            ]}
+          />
+        </div>
 
-            <div></div>
-
-            <p className="text-lg text-center">
-                Suggeriments i aportacions a{" "}
-                <a
-                    href="mailto:lavabos-fib@microones.cat"
-                    className="text-blue-500 underline"
-                >
-                    lavabos-fib@microones.cat
-                </a>
-            </p>
-
-            <p className="text-lg text-center">
-                Fet amb 💩 i 🧻 pels passadissos de l'A5 durant la HackUPC 2025.
-            </p>
-
-            <p className="text-lg text-center">
-                Codi font disponible en el {" "}
-                <a
-                    href="https://github.com/microones/lavabos-fib"
-                    className="text-blue-500 underline"
-                >
-                    repositori del projecte
-                </a>
-                .
-            </p>
-        </main>
-    );
+        <footer className="text-center pt-12 border-t border-[var(--primary)]/10 text-[var(--foreground)]/40 space-y-4">
+          <p className="font-medium text-sm">
+            Fet amb 💩 i 🧻 pels passadissos de l&apos;A5 durant la HackUPC
+            2025.
+          </p>
+          <Link
+            href="https://github.com/microones/lavabos-fib"
+            className="inline-block text-xs font-bold uppercase tracking-widest hover:text-[var(--primary)] transition-colors"
+          >
+            Codi font a GitHub
+          </Link>
+        </footer>
+      </div>
+    </main>
+  );
 }

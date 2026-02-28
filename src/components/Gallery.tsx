@@ -1,51 +1,50 @@
-"use client"
+// @/components/Gallery.tsx
+"use client";
 
-import Image from "next/image"
-import { useState, useEffect } from "react"
+import Image from "next/image";
+import { useState, useEffect } from "react";
 
 export type BuildingImages = {
-  building: string
-  images: string[]
-}
+  building: string;
+  images: string[];
+};
 
 export type YearImages = {
-  year: string
-  buildings: BuildingImages[]
-}
+  year: string;
+  buildings: BuildingImages[];
+};
 
 interface GalleryProps {
-  gallery: YearImages[]
+  gallery: YearImages[];
 }
 
 export default function Gallery({ gallery }: GalleryProps) {
   // Flatten all images into one list for navigation
   const allImages = gallery.flatMap(({ buildings }) =>
-    buildings.flatMap(({ images }) => images)
-  )
+    buildings.flatMap(({ images }) => images),
+  );
 
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null)
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
-  const closeLightbox = () => setCurrentIndex(null)
+  const closeLightbox = () => setCurrentIndex(null);
   const showPrev = () =>
     setCurrentIndex((i) =>
-      i !== null ? (i - 1 + allImages.length) % allImages.length : null
-    )
+      i !== null ? (i - 1 + allImages.length) % allImages.length : null,
+    );
   const showNext = () =>
-    setCurrentIndex((i) =>
-      i !== null ? (i + 1) % allImages.length : null
-    )
+    setCurrentIndex((i) => (i !== null ? (i + 1) % allImages.length : null));
 
   // keyboard navigation
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (currentIndex === null) return
-      if (e.key === "ArrowLeft") showPrev()
-      if (e.key === "ArrowRight") showNext()
-      if (e.key === "Escape") closeLightbox()
+      if (currentIndex === null) return;
+      if (e.key === "ArrowLeft") showPrev();
+      if (e.key === "ArrowRight") showNext();
+      if (e.key === "Escape") closeLightbox();
     }
-    window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
-  }, [currentIndex])
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [currentIndex]);
 
   return (
     <>
@@ -57,7 +56,7 @@ export default function Gallery({ gallery }: GalleryProps) {
               <h3 className="text-xl font-medium mb-2">{building}</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {images.map((src) => {
-                  const idx = allImages.indexOf(src)
+                  const idx = allImages.indexOf(src);
                   return (
                     <div
                       key={src}
@@ -72,7 +71,7 @@ export default function Gallery({ gallery }: GalleryProps) {
                         className="object-cover w-full h-48"
                       />
                     </div>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -88,8 +87,8 @@ export default function Gallery({ gallery }: GalleryProps) {
           {/* Navigation Buttons */}
           <button
             onClick={(e) => {
-              e.stopPropagation()
-              showPrev()
+              e.stopPropagation();
+              showPrev();
             }}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl p-2"
             aria-label="Previous"
@@ -98,8 +97,8 @@ export default function Gallery({ gallery }: GalleryProps) {
           </button>
           <button
             onClick={(e) => {
-              e.stopPropagation()
-              showNext()
+              e.stopPropagation();
+              showNext();
             }}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl p-2"
             aria-label="Next"
@@ -108,8 +107,8 @@ export default function Gallery({ gallery }: GalleryProps) {
           </button>
           <button
             onClick={(e) => {
-              e.stopPropagation()
-              closeLightbox()
+              e.stopPropagation();
+              closeLightbox();
             }}
             className="absolute top-4 right-4 text-white text-3xl"
             aria-label="Close"
@@ -137,9 +136,7 @@ export default function Gallery({ gallery }: GalleryProps) {
               <div
                 key={src}
                 className={`flex-shrink-0 cursor-pointer border-2 ${
-                  idx === currentIndex
-                    ? "border-white"
-                    : "border-transparent"
+                  idx === currentIndex ? "border-white" : "border-transparent"
                 }`}
                 onClick={() => setCurrentIndex(idx)}
               >
@@ -156,5 +153,5 @@ export default function Gallery({ gallery }: GalleryProps) {
         </div>
       )}
     </>
-  )
+  );
 }
