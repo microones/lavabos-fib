@@ -2,10 +2,16 @@
 import path from "path";
 import fs from "fs/promises";
 import Gallery, { YearImages } from "@/components/Gallery";
+import Title from "@/components/ui/Title";
 
 async function loadImages(): Promise<YearImages[]> {
   const imgRoot = path.join(process.cwd(), "public", "img");
-  const years = await fs.readdir(imgRoot, { withFileTypes: true });
+  let years;
+  try {
+    years = await fs.readdir(imgRoot, { withFileTypes: true });
+  } catch {
+    return [];
+  }
   const data: YearImages[] = [];
 
   for (const yearDirent of years.filter(
@@ -19,7 +25,7 @@ async function loadImages(): Promise<YearImages[]> {
     const hasSubdirs = entries.some((e) => e.isDirectory());
     if (!hasSubdirs) {
       const imgs = entries
-        .filter((e) => e.isFile())
+        .filter((e) => e.isFile() && /\.(jpe?g|png|gif|webp)$/i.test(e.name))
         .map((e) => `/${path.posix.join("img", year, e.name)}`);
       buildings.push({ building: year, images: imgs });
     } else {
@@ -43,9 +49,15 @@ export default async function ImatgesPage() {
   const gallery = await loadImages();
 
   return (
-    <main className="p-8 space-y-12">
-      <h1 className="text-3xl font-bold text-center mb-8">Galeria d'Imatges</h1>
-      <Gallery gallery={gallery} />
+    <main className="max-w-7xl mx-auto px-6 py-12 space-y-12">
+      <Title level={1}>Galeria d&apos;Imatges</Title>
+      {gallery.length === 0 ? (
+        <p className="text-[var(--muted)] font-mono text-sm border border-[var(--border)] p-6">
+          No hi ha imatges disponibles encara.
+        </p>
+      ) : (
+        <Gallery gallery={gallery} />
+      )}
     </main>
   );
 }

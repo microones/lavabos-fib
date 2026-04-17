@@ -3,57 +3,57 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import ThemeToggle from "@/components/ThemeToggle";
+import SmallButton from "@/components/ui/SmallButton";
+
+const navLinks = [
+  { href: "/imatges", label: "Galeria" },
+  { href: "/about", label: "About" },
+];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    /* Canvi clau: afegim 'glass-card' i 'border-b'. 
-      Això crea la separació visual quan fas scroll.
-    */
-    <header className="sticky top-0 z-50 w-full glass-card border-x-0 border-t-0 border-b border-white/10 transition-colors duration-300 shadow-sm">
-      <div className="flex items-center justify-between px-6 py-4 md:px-8 max-w-7xl mx-auto">
-        {/* Logo i Títol */}
-        <Link href="/" className="flex items-center group">
+    <header className="sticky top-0 z-50 w-full bg-[var(--bg)] border-b-2 border-[var(--border)] shadow-sm transition-colors duration-200">
+      <div className="flex items-center justify-between px-6 py-3 md:px-8 max-w-7xl mx-auto">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 group">
           <Image
             src="/img/logo_lavabos-fib.png"
             alt="Lavabos FIB Logo"
-            width={32}
-            height={32}
-            className="priority group-hover:rotate-12 transition-transform duration-300"
+            width={28}
+            height={28}
+            className="group-hover:rotate-12 transition-transform duration-300"
           />
-          <div className="ml-3 flex items-center gap-2">
-            <span className="text-xl font-extrabold tracking-tight text-[var(--primary)]">
-              lavabos-fib
-            </span>
-            <span className="text-[10px] font-mono bg-[var(--primary)] px-2 py-0.5 rounded text-white font-bold">
-              ALPHA
-            </span>
-          </div>
+          <span className="text-xl font-extrabold tracking-tight text-[var(--primary)]">
+            lavabos-fib
+          </span>
+          <span className="hidden sm:inline text-[10px] font-mono bg-[var(--secondary)] px-2 py-0.5 text-[var(--on-secondary)] font-bold">
+            ALPHA
+          </span>
         </Link>
 
-        {/* Desktop menu */}
-        <nav className="hidden md:flex space-x-8">
-          {["Imatges", "About"].map((item) => (
-            <Link
-              key={item}
-              href={`/${item.toLowerCase()}`}
-              className="text-sm font-bold uppercase tracking-wide text-[var(--foreground)] hover:text-[var(--primary)] transition-colors duration-200 relative group"
-            >
-              {item}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[var(--primary)] group-hover:w-full transition-all duration-300"></span>
-            </Link>
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-2">
+          {navLinks.map(({ href, label }) => (
+            <SmallButton key={href} href={href} variant="ghost">
+              {label}
+            </SmallButton>
           ))}
+          <div className="ml-2">
+            <ThemeToggle />
+          </div>
         </nav>
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2 text-[var(--foreground)] focus:outline-none"
+          className="md:hidden p-2 text-[var(--fg)] border border-[var(--border)] focus:outline-none"
           aria-label="Toggle menu"
           onClick={() => setOpen(!open)}
         >
           <svg
-            className="w-6 h-6"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -78,25 +78,21 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <nav className="md:hidden border-t border-white/10 animate-in fade-in slide-in-from-top-4 duration-300">
-          <ul className="flex flex-col space-y-1 p-6">
-            <li>
-              <Link
-                href="/imatges"
-                onClick={() => setOpen(false)}
-                className="block py-3 px-4 rounded-xl text-base font-bold text-[var(--foreground)] hover:bg-[var(--primary)]/10 transition-colors"
-              >
-                Galeria
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/about"
-                onClick={() => setOpen(false)}
-                className="block py-3 px-4 rounded-xl text-base font-bold text-[var(--foreground)] hover:bg-[var(--primary)]/10 transition-colors"
-              >
-                About
-              </Link>
+        <nav className="md:hidden border-t border-[var(--border)] bg-[var(--bg)]">
+          <ul className="flex flex-col p-4 gap-2">
+            {navLinks.map(({ href, label }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className="block py-2 px-4 font-bold text-[var(--fg)] border border-transparent hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+            <li className="pt-2">
+              <ThemeToggle />
             </li>
           </ul>
         </nav>
