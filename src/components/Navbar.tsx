@@ -20,7 +20,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
           <Image
-            src="/img/logo_lavabos-fib.png"
+            src={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/photos/file/public/lavabos-fib-logo.png`}
             alt="Lavabos FIB Logo"
             width={28}
             height={28}

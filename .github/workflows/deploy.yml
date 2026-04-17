@@ -19,7 +19,7 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Install dependencies
+      - name: Install dependencies (app)
         run: bun install
 
       - name: Generate Prisma Client
@@ -28,13 +28,23 @@ jobs:
       - name: Create missing directories
         run: mkdir -p public/img
 
-      - name: build check
+      - name: Build check (app)
         run: bun run build
         env:
-          # Avis! Aquestes dades són fictícies (us ho juro) 
+          # Avis! Aquestes dades són fictícies (us ho juro)
           DATABASE_URL: "postgresql://microones:mmmmmmmmmmmmmmmm@localhost:5432/lavabos-fib"
-          NEXT_PUBLIC_API_URL: "http://localhost:3000"
+          NEXT_PUBLIC_API_URL: "http://localhost:3001"
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+
+      - name: Install dependencies (api)
+        run: cd lavabos-fib-api && bun install
+
+      - name: Build check (api)
+        run: cd lavabos-fib-api && bun run build
+        env:
+          PHOTOS_DIR: "/tmp/photos"
+          API_BASE_URL: "http://localhost:3001"
+          NEXT_PUBLIC_API_BASE_URL: "http://localhost:3001"
 
 # SEGON PAS: Desplegament real (NOMÉS si el primer pas és OK i estem a MAIN)
   deploy:
@@ -57,20 +67,28 @@ jobs:
             # 1. Configurar l'entorn
             set -e
             export PATH=$PATH:/home/yerayzalaya/.bun/bin
-            
-            # 2. Entrar al directori
+
+            # 2. Entrar al directori i actualitzar codi
             cd /var/www/lavabos-fib
-            
-            # 3. Actualitzar codi i dependències
             git pull origin main
             bun install
-            
-            # 4. Base de dades
+
+            # 3. Base de dades
             bun prisma generate
             bun prisma migrate deploy
-            
-            # 5. Build del projecte Next.js
+
+            # 4. Build de l'app principal (cal NEXT_PUBLIC_API_URL en build time)
+            NEXT_PUBLIC_API_URL=https://api.lavabos-fib.microones.cat \
+            API_URL=https://api.lavabos-fib.microones.cat \
             bun run build
-            
-            # 6. Reiniciar l'aplicació amb PM2
+
+            # 5. Reiniciar l'app principal amb PM2
             pm2 restart lavabos-fib || pm2 start "bun run start" --name "lavabos-fib"
+
+            # 6. Build i reinici de la API de fotos
+            cd /var/www/lavabos-fib/lavabos-fib-api
+            bun install
+            NEXT_PUBLIC_API_BASE_URL=https://api.lavabos-fib.microones.cat \
+            API_BASE_URL=https://api.lavabos-fib.microones.cat \
+            bun run build
+            pm2 restart lavabos-fib-api || pm2 start "bun run start" --name "lavabos-fib-api"

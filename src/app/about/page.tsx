@@ -11,6 +11,32 @@ interface Person {
   href?: string;
 }
 
+const UPC = "Universitat Politècnica de Catalunya";
+const FALLBACK_PHOTO = "https://placehold.co/90x90/1a1a1a/666?text=?";
+
+const TEAM: Record<string, Omit<Person, "src">> = {
+  "yeray-zalaya": { name: "Yeray Zalaya Domingo", uni: UPC, href: "https://github.com/microones/" },
+  "marc-costa": { name: "Marc Costa Brusco", uni: UPC, href: "https://github.com/mcosta-b/" },
+  "aura-han": { name: "Aura Han Ruiz Sánchez", uni: UPC, href: "https://github.com/AuraHan5/" },
+  "abel-aymerich": { name: "Abel Aymerich", uni: UPC, href: "https://github.com/abeel987/" },
+  "ada-pages": { name: "Ada Pagès Plaja", uni: UPC, href: "https://github.com/ddanor/" },
+};
+
+async function getTeamWithPhotos(): Promise<Record<string, string>> {
+  const apiUrl = process.env.API_URL;
+  if (!apiUrl) return {};
+  try {
+    const res = await fetch(`${apiUrl}/api/v1/photos/about`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return {};
+    const { data } = await res.json() as { data: { member: string; url: string }[] };
+    return Object.fromEntries(data.map((m) => [m.member, m.url]));
+  } catch {
+    return {};
+  }
+}
+
 const Section = ({ title, people }: { title: string; people: Person[] }) => (
   <section className="w-full space-y-6">
     <Title level={2}>{title}</Title>
@@ -46,7 +72,14 @@ const Section = ({ title, people }: { title: string; people: Person[] }) => (
   </section>
 );
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const photoUrls = await getTeamWithPhotos();
+
+  const makePerson = (slug: string): Person => ({
+    ...TEAM[slug],
+    src: photoUrls[slug] ?? FALLBACK_PHOTO,
+  });
+
   return (
     <main className="min-h-screen w-full bg-[var(--bg)]">
       <div className="max-w-4xl mx-auto px-6 py-20 space-y-16">
@@ -61,42 +94,16 @@ export default function AboutPage() {
           <Section
             title="Idea i desenvolupament"
             people={[
-              {
-                name: "Yeray Zalaya Domingo",
-                src: "/img/about/yeray-zalaya.jpeg",
-                uni: "Universitat Politècnica de Catalunya",
-                href: "https://github.com/microones/",
-              },
-              {
-                name: "Marc Costa Brusco",
-                src: "/img/about/marc-costa.jpeg",
-                uni: "Universitat Politècnica de Catalunya",
-                href: "https://github.com/mcosta-b/",
-              },
-              {
-                name: "Aura Han Ruiz Sánchez",
-                src: "/img/about/aura-han.png",
-                uni: "Universitat Politècnica de Catalunya",
-                href: "https://github.com/AuraHan5/",
-              },
+              makePerson("yeray-zalaya"),
+              makePerson("marc-costa"),
+              makePerson("aura-han"),
             ]}
           />
-
           <Section
             title="Col·laboradors"
             people={[
-              {
-                name: "Abel Aymerich",
-                src: "/img/about/abel-aymerich.png",
-                uni: "Universitat Politècnica de Catalunya",
-                href: "https://github.com/abeel987/",
-              },
-              {
-                name: "Ada Pagès Plaja",
-                src: "/img/about/ada-pages.jpeg",
-                uni: "Universitat Politècnica de Catalunya",
-                href: "https://github.com/ddanor/",
-              },
+              makePerson("abel-aymerich"),
+              makePerson("ada-pages"),
             ]}
           />
         </div>
