@@ -73,6 +73,8 @@ model Verification {
 
 model Lavabo {
   id      Int    @id @default(autoincrement())
+  slug    String
+  string_id String @unique
   edifici String
   planta  String
   genere  Genere @default(NEUTRE)
