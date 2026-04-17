@@ -17,9 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ca" className="scroll-smooth">
+    <html lang="ca">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme')||'fib';document.documentElement.dataset.theme=t;}catch(e){}`,
+          }}
+        />
+      </head>
       <body
-        className={`${inter.variable} ${fira.variable} antialiased min-h-screen bg-[var(--background)] text-[var(--foreground)]`}
+        className={`${inter.variable} ${fira.variable} antialiased min-h-screen bg-[var(--bg)] text-[var(--fg)]`}
       >
         <Navbar />
         {children}

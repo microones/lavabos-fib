@@ -1,38 +1,53 @@
 @import "tailwindcss";
 
+/* ─── Fonts ─────────────────────────────────────────────────────────────── */
 @theme {
   --font-inter: var(--font-inter);
   --font-fira-code: var(--font-fira-code);
-  --color-brand-primary: #4a3728;
-  --color-brand-accent: #8b5e3c;
 }
 
-:root {
-  --background: #fdfcfb;
-  --foreground: #2d241e;
-  --primary: var(--color-brand-primary);
-  --accent: var(--color-brand-accent);
-  --card-bg: rgb(255 255 255 / 0.7);
+/* ─── FIB theme (default) ────────────────────────────────────────────────
+   Colors: white, FIB red, UPC blue, FIB grey
+   ────────────────────────────────────────────────────────────────────── */
+:root,
+[data-theme="fib"] {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --primary: #ff0d00;
+  --secondary: #007bc0;
+  --muted: #696868;
+  --card-bg: #f4f4f4;
+  --border: #d0d0d0;
+  --on-primary: #ffffff;
+  --on-secondary: #ffffff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #12100e;
-    --foreground: #f5f2f0;
-    --primary: #d7ccc8;
-    --accent: #a1887f;
-    --card-bg: rgb(30 25 22 / 0.7);
-  }
+/* ─── Organic theme ──────────────────────────────────────────────────────
+   Dark brown palette. Main: amber. Secondary: vomit olive + rust.
+   ────────────────────────────────────────────────────────────────────── */
+[data-theme="organic"] {
+  --bg: #120c04;
+  --fg: #e8d8a8;
+  --primary: #d4900a;
+  --secondary: #7a9410;
+  --muted: #c05820;
+  --card-bg: #1e1208;
+  --border: #3a2810;
+  --on-primary: #120c04;
+  --on-secondary: #120c04;
+}
+
+/* ─── Base styles ────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+  box-sizing: border-box;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-inter), sans-serif;
   min-height: 100vh;
-}
-
-@utility glass-card {
-  background-color: var(--card-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgb(255 255 255 / 0.1);
 }
