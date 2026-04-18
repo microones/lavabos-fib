@@ -46,7 +46,7 @@ export default async function AboutPage() {
         <header className="space-y-4">
           <Title level={1}>Sobre el projecte</Title>
           <p className="text-lg text-[var(--muted)] font-medium italic">
-            Quin és el millor lavabo de la FIB? La comunitat respon.
+            Quin és el millor lavabo de la FIB? La comunitat FIBer respon.
           </p>
         </header>
 
@@ -87,6 +87,10 @@ export default async function AboutPage() {
           <SmallButton href="https://github.com/microones/lavabos-fib" variant="ghost" external>
             Codi font a GitHub
           </SmallButton>
+					<p className="font-medium text-sm">
+					  Les imatges es poden obtenir a través de 
+						<a href="https://api.lavabos-fib.microones.cat/"> l'API de lavabos-fib </a>.
+					</p>
         </footer>
       </div>
     </main>

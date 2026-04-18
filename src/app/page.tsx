@@ -19,7 +19,7 @@ export default function HomePage() {
           <Badge variant="info">ALPHA</Badge>
         </div>
         <p className="text-lg md:text-xl text-[var(--muted)] font-medium italic">
-          La pàgina que definitivament no necessitaves
+          
         </p>
       </header>
 
