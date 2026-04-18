@@ -11,7 +11,7 @@ type LavaboDetailPageProps = {
 export default async function LavaboDetailPage({
   params,
 }: LavaboDetailPageProps) {
-  const lavabo = await prisma.lavabo.findUnique({
+  const lavabo = await prisma.lavabo.findFirst({
     where: { string_id: params.string_id },
   });
 
