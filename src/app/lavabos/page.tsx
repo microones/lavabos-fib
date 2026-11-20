@@ -9,12 +9,20 @@ export const dynamic = "force-dynamic";
 
 export default async function LavabosPage() {
   const lavabos = await prisma.lavabo.findMany({
-    orderBy: [{ edifici: "asc" }, { planta: "asc" }],
     include: {
       ressenyes: { select: { puntuacio: true } },
       _count: { select: { frases: true } },
     },
   });
+
+  // Postgres ordena "-1" després de "0" (la collation ignora el guió): ordenem les plantes aquí.
+  const numPlanta = (p: string) => (/^-?\d+$/.test(p.trim()) ? Number(p) : Infinity);
+  lavabos.sort(
+    (a, b) =>
+      a.edifici.localeCompare(b.edifici) ||
+      numPlanta(a.planta) - numPlanta(b.planta) ||
+      a.planta.localeCompare(b.planta),
+  );
 
   const perEdifici = new Map<string, typeof lavabos>();
   for (const l of lavabos) perEdifici.set(l.edifici, [...(perEdifici.get(l.edifici) ?? []), l]);
