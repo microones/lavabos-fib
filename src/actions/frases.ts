@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { Prisma } from '../../generated/prisma';
+import { getUserOrThrow } from '@/lib/server/auth'
 
 const fraseBasica = {
   id: true,
@@ -57,6 +58,9 @@ export async function getLavabosOptions() {
 }
 
 export async function createFrase(formData: FormData) {
+  // 0. Només usuaris autenticats poden crear frases
+  await getUserOrThrow()
+
   // 1. Extreure les dades del formulari HTML
   const contingut = formData.get('contingut') as string
   const lavaboId = parseInt(formData.get('lavaboId') as string)

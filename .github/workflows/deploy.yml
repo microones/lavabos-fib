@@ -36,15 +36,7 @@ jobs:
           NEXT_PUBLIC_API_URL: "http://localhost:3001"
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
 
-      - name: Install dependencies (api)
-        run: cd lavabos-fib-api && bun install
-
-      - name: Build check (api)
-        run: cd lavabos-fib-api && bun run build
-        env:
-          PHOTOS_DIR: "/tmp/photos"
-          API_BASE_URL: "http://localhost:3001"
-          NEXT_PUBLIC_API_BASE_URL: "http://localhost:3001"
+      # La API de fotos (lavabos-fib-api) no viu en aquest repo: només es construeix al servidor (pas de deploy).
 
 # SEGON PAS: Desplegament real (NOMÉS si el primer pas és OK i estem a MAIN)
   deploy:
