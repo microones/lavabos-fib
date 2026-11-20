@@ -2,18 +2,55 @@
 
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { getUser } from "@/lib/server/auth";
+import { getUserOrThrow } from "@/lib/server/auth";
+
+const NO_AUTORITZAT = "No autoritzat";
+
+// Retorna true si l'usuari actual és admin (sense llançar)
+async function esAdmin(): Promise<boolean> {
+  try {
+    await getUserOrThrow({ admin: true });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export type FraseUpdateData = {
+  contingut?: string;
+  idioma?: string;
+  dibuix?: boolean | string;
+  lavaboId: number | string;
+};
+
+// AdminFrasesManager envia Object.fromEntries(formData): també acceptem aquest format
+type FraseUpdateInput = FraseUpdateData | Record<string, FormDataEntryValue>;
+
+function parseLavaboId(valor: unknown): number | null {
+  if (typeof valor !== "number" && typeof valor !== "string") return null;
+  const n = typeof valor === "number" ? valor : Number(valor.trim());
+  return Number.isInteger(n) && n > 0 ? n : null;
+}
+
+function comText(valor: unknown): string | undefined {
+  return typeof valor === "string" ? valor : undefined;
+}
 
 // --- 1. ACTUALITZAR UNA FRASE ---
-export async function updateFrase(id: number, data: any) {
+export async function updateFrase(id: number, data: FraseUpdateInput) {
+  if (!(await esAdmin())) return { success: false, error: NO_AUTORITZAT };
+  if (!Number.isInteger(id)) return { success: false, error: "ID de frase invàlid" };
+  const lavaboId = parseLavaboId(data?.lavaboId);
+  if (lavaboId === null) return { success: false, error: "ID de lavabo invàlid" };
+
   try {
     await prisma.frase.update({
       where: { id },
       data: {
-        contingut: data.contingut,
-        idioma: data.idioma,
+        contingut: comText(data.contingut),
+        idioma: comText(data.idioma),
         dibuix: data.dibuix === 'true' || data.dibuix === true,
-        lavaboId: parseInt(data.lavaboId),
+        lavaboId,
       }
     });
     revalidatePath('/admin/frases');
@@ -26,6 +63,9 @@ export async function updateFrase(id: number, data: any) {
 
 // --- 2. ELIMINAR ---
 export async function deleteFrase(id: number) {
+  if (!(await esAdmin())) return { success: false, error: NO_AUTORITZAT };
+  if (!Number.isInteger(id)) return { success: false, error: "ID de frase invàlid" };
+
   try {
     await prisma.frase.delete({ where: { id } });
     revalidatePath('/admin/frases');
@@ -38,7 +78,9 @@ export async function deleteFrase(id: number) {
 // --- 3. IMPORTACIÓ MASSIVA (Bulk) ---
 // Suposem que passem un text on cada línia és una frase
 export async function bulkImportFrases(text: string, lavaboId: number) {
-  if (!lavaboId) return { success: false, error: "Falta ID de lavabo" };
+  if (!(await esAdmin())) return { success: false, error: NO_AUTORITZAT };
+  if (!Number.isInteger(lavaboId) || lavaboId <= 0) return { success: false, error: "Falta ID de lavabo" };
+  if (typeof text !== "string") return { success: false, error: "Text invàlid" };
   
   const linies = text.split('\n').filter(l => l.trim().length > 0);
   const dades = linies.map(l => ({
@@ -58,8 +100,7 @@ export async function bulkImportFrases(text: string, lavaboId: number) {
 
 // --- 4. SQL DIRECTE (PERILLÓS) ---
 export async function executeRawSql(query: string) {
-  const session = await getUser();
-  if (!session || !session.admin) throw new Error("No autoritzat");
+  await getUserOrThrow({ admin: true });
 
   try {
     // queryRawUnsafe permet SQL Injection
@@ -75,8 +116,8 @@ export async function executeRawSql(query: string) {
     ));
 
     return { success: true, data: cleanResult };
-  } catch (e: any) {
+  } catch (e) {
     // Retornem l'error de SQL perquè es vegi a la terminal
-    return { success: false, error: e.message };
+    return { success: false, error: e instanceof Error ? e.message : String(e) };
   }
 }
