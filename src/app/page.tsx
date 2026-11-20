@@ -6,8 +6,8 @@ import Badge from "@/components/ui/Badge";
 const items = [
   { href: "/imatges", label: "Galeria d'imatges", active: true },
   { href: "/about", label: "Sobre el projecte", active: true },
-  { href: "/frases", label: "Taula de frases", active: false },
-  { href: "/lavabos", label: "Llistat de lavabos", active: false },
+  { href: "/frases", label: "Taula de frases", active: true },
+  { href: "/lavabos", label: "Llistat de lavabos", active: true },
 ];
 
 export default function HomePage() {

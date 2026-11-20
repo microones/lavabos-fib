@@ -7,6 +7,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import SmallButton from "@/components/ui/SmallButton";
 
 const navLinks = [
+  { href: "/lavabos", label: "Lavabos" },
+  { href: "/frases", label: "Frases" },
   { href: "/imatges", label: "Galeria" },
   { href: "/about", label: "About" },
 ];
