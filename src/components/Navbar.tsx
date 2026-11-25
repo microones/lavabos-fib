@@ -6,7 +6,11 @@ import Image from "next/image";
 import ThemeToggle from "@/components/ThemeToggle";
 import SmallButton from "@/components/ui/SmallButton";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 const navLinks = [
+  { href: "/lavabos", label: "Lavabos" },
+  { href: "/frases", label: "Frases" },
   { href: "/imatges", label: "Galeria" },
   { href: "/about", label: "About" },
 ];
@@ -19,13 +23,16 @@ export default function Navbar() {
       <div className="flex items-center justify-between px-6 py-3 md:px-8 max-w-7xl mx-auto">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <Image
-            src={`${process.env.NEXT_PUBLIC_API_URL}/api/v1/photos/file/public/lavabos-fib-logo.png`}
-            alt="Lavabos FIB Logo"
-            width={28}
-            height={28}
-            className="group-hover:rotate-12 transition-transform duration-300"
-          />
+          {/* Sense NEXT_PUBLIC_API_URL (dev sense API) no hi ha logo: next/image peta amb una URL relativa "undefined/..." */}
+          {apiUrl && (
+            <Image
+              src={`${apiUrl}/api/v1/photos/file/public/lavabos-fib-logo.png`}
+              alt="Lavabos FIB Logo"
+              width={28}
+              height={28}
+              className="group-hover:rotate-12 transition-transform duration-300"
+            />
+          )}
           <span className="text-xl font-extrabold tracking-tight text-[var(--primary)]">
             lavabos-fib
           </span>

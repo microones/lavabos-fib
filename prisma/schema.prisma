@@ -72,7 +72,8 @@ model Verification {
 // DEFINICIÓ DE MODELS lavabos-fib
 
 model Lavabo {
-  id      Int    @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
+  string_id String @unique // Identificador per a la URL: /lavabos/<string_id> (ex: "a5-1-neutre")
   edifici String
   planta  String
   genere  Genere @default(NEUTRE)

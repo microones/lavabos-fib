@@ -1,170 +1,144 @@
 'use client'
 
-import { useState, Fragment } from "react"; // <--- Importem Fragment
+import { useState } from "react";
 import Link from "next/link";
 import type { FraseAmbRelacions } from "@/actions/frases";
+import Box from "@/components/ui/Box";
+import Badge from "@/components/ui/Badge";
+import { GENERE_LABEL, plantaLabel } from "@/lib/lavabos";
 
-// --- SUB-COMPONENT RECURSIU (Igual que abans) ---
-const FilVisualitzador = ({ frase, nivell = 0 }: { frase: any, nivell?: number }) => {
-  if (!frase) return null;
+// Forma mínima d'una frase dins d'un fil (els nivells profunds no porten totes les relacions)
+type FraseFil = {
+  id: number;
+  contingut: string | null;
+  dibuix: boolean;
+  lavabo: FraseAmbRelacions["lavabo"];
+  imatge: { url: string } | null;
+  respostes?: FraseFil[];
+};
 
+function Contingut({ frase }: { frase: Pick<FraseFil, "contingut" | "dibuix"> }) {
+  if (frase.dibuix) {
+    return <span className="italic text-[var(--secondary)]">🎨 Dibuix a la paret</span>;
+  }
+  return <>{frase.contingut}</>;
+}
+
+function Ubicacio({ lavabo }: { lavabo: FraseFil["lavabo"] }) {
   return (
-    <div className={`mt-3 ${nivell > 0 ? 'ml-6 border-l-2 border-gray-300 pl-4' : ''}`}>
-      <div className="bg-white p-3 rounded border border-gray-200 shadow-sm text-sm">
-        <div className="flex justify-between items-start mb-1">
-          <span className="font-bold text-gray-700 text-xs">
-            {frase.lavabo.edifici} ({frase.lavabo.genere})
-          </span>
-          <span className="text-gray-400 text-[10px] font-mono">ID: {frase.id}</span>
-        </div>
-        
-        <div className="text-gray-900 mb-1 leading-snug">
-          {frase.dibuix ? (
-             <span className="text-purple-700 font-medium italic">🎨 [Contingut visual: Dibuix]</span>
-          ) : (
-             frase.contingut
-          )}
-        </div>
+    <Link
+      href={`/lavabos/${lavabo.string_id}`}
+      className="font-mono text-xs text-[var(--muted)] hover:text-[var(--primary)] transition-colors"
+    >
+      {lavabo.edifici} · {plantaLabel(lavabo.planta)} · {GENERE_LABEL[lavabo.genere]}
+    </Link>
+  );
+}
 
-        {frase.imatge && (
-          <a href={frase.imatge.url} target="_blank" className="text-blue-600 text-xs hover:underline flex items-center gap-1 mt-2">
-            <span>📎</span> Veure imatge adjunta
-          </a>
-        )}
+function EnllacImatge({ url }: { url: string }) {
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-block font-mono text-xs text-[var(--secondary)] hover:text-[var(--primary)] underline underline-offset-2"
+    >
+      📷 Veure imatge
+    </a>
+  );
+}
+
+// Fil de respostes, recursiu
+function Fil({ frase }: { frase: FraseFil }) {
+  return (
+    <div className="border-l-2 border-[var(--border)] pl-4 space-y-3">
+      <div className="space-y-1">
+        <Ubicacio lavabo={frase.lavabo} />
+        <p className="text-[var(--fg)] leading-snug break-words">
+          <Contingut frase={frase} />
+        </p>
+        {frase.imatge && <EnllacImatge url={frase.imatge.url} />}
       </div>
-
       {frase.respostes && frase.respostes.length > 0 && (
-        <div className="space-y-1 border-l border-dashed border-gray-300 ml-2 pl-2 pt-2">
-          {frase.respostes.map((resposta: any) => (
-            <FilVisualitzador key={resposta.id} frase={resposta} nivell={nivell + 1} />
+        <div className="space-y-3">
+          {frase.respostes.map((r) => (
+            <Fil key={r.id} frase={r} />
           ))}
         </div>
       )}
     </div>
   );
-};
-// ----------------------------------------------------
+}
 
 interface FrasesTableProps {
   frases: FraseAmbRelacions[];
   className?: string;
 }
 
-export default function FrasesTable({ frases, className }: FrasesTableProps) {
-  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+export default function FrasesTable({ frases, className = "" }: FrasesTableProps) {
+  const [oberts, setOberts] = useState<Set<number>>(new Set());
 
-  const toggleRow = (id: number) => {
-    const newSet = new Set(expandedRows);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
-    setExpandedRows(newSet);
+  const toggle = (id: number) => {
+    setOberts((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
-  if (!frases || frases.length === 0) return <div className="p-4 text-center text-gray-500">Sense dades.</div>;
+  const arrels = frases.filter((f) => f.pare === null);
 
   return (
-    <div className={`overflow-x-auto border border-gray-200 rounded-md bg-white ${className}`}>
-      <table className="min-w-full divide-y divide-gray-300">
-        <thead className="bg-gray-100">
-          <tr>
-            <th scope="col" className="w-10 px-2 py-3"></th>
-            <th scope="col" className="py-3 pl-2 text-left text-xs font-bold uppercase text-gray-500">Ubicació</th>
-            <th scope="col" className="px-3 py-3 text-left text-xs font-bold uppercase text-gray-500 w-1/2">Missatge</th>
-            <th scope="col" className="px-3 py-3 text-center text-xs font-bold uppercase text-gray-500">Foto</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
-          {frases.filter((f) => f.pare === null).map((f) => {
-            const hasReplies = f.respostes && f.respostes.length > 0;
-            const isExpanded = expandedRows.has(f.id);
+    <ul className={`space-y-4 ${className}`}>
+      {arrels.map((f) => {
+        const nRespostes = f.respostes.length;
+        const obert = oberts.has(f.id);
 
-            return (
-              // ⚠️ CLAU: Usem Fragment amb KEY aquí. Això no crea cap node al DOM.
-              <Fragment key={f.id}>
-                
-                {/* 1. FILA PRINCIPAL */}
-                <tr className="hover:bg-slate-50 transition-colors">
-                  <td className="px-2 py-4 text-center align-top">
-                    {hasReplies && (
-                      <button
-                        onClick={() => toggleRow(f.id)}
-                        className={`p-1 rounded transition-transform duration-200 ${isExpanded ? 'rotate-90 text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600'}`}
-                        aria-label={isExpanded ? "Tancar fil" : "Obrir fil"}
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-                      </button>
-                    )}
-                  </td>
+        return (
+          <Box as="li" key={f.id} className="p-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Ubicacio lavabo={f.lavabo} />
+              <div className="flex items-center gap-2">
+                {f.idioma && <Badge variant="muted">{f.idioma}</Badge>}
+                <span className="font-mono text-[10px] text-[var(--muted)]">#{f.id}</span>
+              </div>
+            </div>
 
-                  <td className="py-4 pl-2 text-sm align-top whitespace-nowrap">
-                    <div className="font-bold text-gray-900">{f.lavabo.edifici}</div>
-                    <div className="text-gray-500 text-xs">{f.lavabo.planta} • {f.lavabo.genere}</div>
-                    <Link href={`/lavabos/${f.lavaboId}`} className="text-[10px] text-blue-500 hover:underline block mt-1">
-                      Veure lavabo
-                    </Link>
-                  </td>
+            <p className="text-lg md:text-xl font-medium text-[var(--fg)] leading-snug break-words border-l-4 border-[var(--primary)] pl-3">
+              <Contingut frase={f} />
+            </p>
 
-                  <td className="px-3 py-4 text-sm text-gray-700 align-top">
-                    <div className="font-medium text-base text-gray-900 leading-snug">
-                      {f.dibuix ? <span className="text-purple-600 font-medium italic">🎨 Dibuix a la paret</span> : f.contingut}
-                    </div>
-                    
-                    {/* Resum de respostes quan està TANCAT */}
-                    {hasReplies && !isExpanded && (
-                       <button 
-                         onClick={() => toggleRow(f.id)} 
-                         className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded hover:bg-blue-100 transition"
-                       >
-                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>
-                         Veure {f.respostes.length} respostes
-                       </button>
-                    )}
-                  </td>
-
-                  <td className="px-3 py-4 text-center align-top">
-                    {f.imatge ? (
-                      <a 
-                        href={f.imatge.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-block p-2 bg-gray-50 border border-gray-200 rounded hover:bg-blue-50 hover:border-blue-300 transition"
-                        title="Veure imatge completa"
-                      >
-                        <span className="text-xl">📷</span>
-                      </a>
-                    ) : (
-                      <span className="text-gray-200 text-lg select-none">×</span>
-                    )}
-                  </td>
-                </tr>
-
-                {/* 2. FILA DE DETALLS (FIL DE CONVERSA) - Només si està expandit */}
-                {isExpanded && hasReplies && (
-                  <tr className="bg-gray-50">
-                    <td colSpan={4} className="px-4 py-4 border-b border-gray-200 shadow-inner">
-                      <div className="ml-8 pl-4 border-l-2 border-blue-300">
-                        <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                          <span>Fil de conversa</span>
-                          <span className="text-[10px] bg-gray-200 px-1.5 rounded-full text-gray-600">{f.respostes.length}</span>
-                        </h4>
-                        
-                        <div className="flex flex-col gap-4">
-                            {f.respostes.map((resposta) => (
-                             <FilVisualitzador key={resposta.id} frase={resposta} />
-                            ))}
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
+            {(f.imatge || nRespostes > 0) && (
+              <div className="flex flex-wrap items-center gap-4">
+                {f.imatge && <EnllacImatge url={f.imatge.url} />}
+                {nRespostes > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => toggle(f.id)}
+                    aria-expanded={obert}
+                    className="inline-flex items-center gap-2 border border-[var(--border)] px-2 py-1 font-mono text-xs text-[var(--fg)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors cursor-pointer"
+                  >
+                    <span className={`inline-block transition-transform ${obert ? "rotate-90" : ""}`}>▸</span>
+                    {obert ? "Amagar" : "Veure"} {nRespostes} {nRespostes === 1 ? "resposta" : "respostes"}
+                  </button>
                 )}
-              </Fragment>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+              </div>
+            )}
+
+            {obert && nRespostes > 0 && (
+              <div className="space-y-3 pt-2 border-t border-[var(--border)]">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">
+                  Fil de conversa
+                </h4>
+                {f.respostes.map((r) => (
+                  <Fil key={r.id} frase={r} />
+                ))}
+              </div>
+            )}
+          </Box>
+        );
+      })}
+    </ul>
   );
 }
