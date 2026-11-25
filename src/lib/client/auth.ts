@@ -6,10 +6,10 @@ export const authClient = createAuthClient({
     // baseURL: "http://localhost:3000"
 })
 
-export const { signIn, signUp, useSession } = createAuthClient()
+export const { signIn, signUp, useSession } = authClient
 
-export function getUser() {
+/** Hook: l'usuari de la sessió actual (o null). */
+export function useUser() {
     const { data: session } = useSession()
-    if (!session) return null
-    return session.user
+    return session?.user ?? null
 }

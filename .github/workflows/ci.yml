@@ -1,0 +1,46 @@
+name: CI Lavabos FIB
+
+# Comprova cada PR i cada push a main: dependències sense vulnerabilitats conegudes, lint i build.
+# El desplegament es fa al servidor amb `bash scripts/deploy.sh` (vegeu CLAUDE.md).
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Security audit
+        run: bun audit
+
+      - name: Generate Prisma Client
+        run: bun prisma generate
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Build check
+        run: bun run build
+        env:
+          # Dades fictícies: el build no es connecta a la base de dades ni a l'API
+          DATABASE_URL: "postgresql://ci:ci@localhost:5432/lavabos-fib"
+          NEXT_PUBLIC_API_URL: "http://localhost:3001"
+          API_URL: "http://localhost:3001"
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}

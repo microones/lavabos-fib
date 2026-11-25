@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import ThemeToggle from "@/components/ThemeToggle";
 import SmallButton from "@/components/ui/SmallButton";
 
@@ -25,8 +24,9 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-3 group">
           {/* Sense NEXT_PUBLIC_API_URL (dev sense API) no hi ha logo: next/image peta amb una URL relativa "undefined/..." */}
           {apiUrl && (
-            <Image
-              src={`${apiUrl}/api/v1/photos/file/public/lavabos-fib-logo.png`}
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={`${apiUrl}/api/v1/photos/file/public/lavabos-fib-logo.png?w=320`}
               alt="Lavabos FIB Logo"
               width={28}
               height={28}

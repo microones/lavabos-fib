@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Box from "@/components/ui/Box";
 import Title from "@/components/ui/Title";
 import SmallButton from "@/components/ui/SmallButton";
@@ -9,8 +8,9 @@ async function getFotos(): Promise<Record<string, string>> {
   try {
     const res = await fetch(`${apiUrl}/api/v1/photos/about`, { next: { revalidate: 3600 } });
     if (!res.ok) return {};
-    const { data } = await res.json() as { data: { member: string; url: string }[] };
-    return Object.fromEntries(data.map((m) => [m.member, m.url]));
+    const { data } = await res.json() as { data: { member: string; url: string; photo?: { sizes: Record<string, string> } | null }[] };
+    // versió petita (WebP de 320 px) si l'API la dona; la foto es mostra a 90 px
+    return Object.fromEntries(data.map((m) => [m.member, m.photo?.sizes["320"] ?? m.url]));
   } catch {
     return {};
   }
@@ -57,7 +57,8 @@ export default async function AboutPage() {
               <Box key={persona.nom} className="p-5 flex items-center gap-6">
                 <div className="relative flex-shrink-0 w-[90px] h-[90px] border-2 border-[var(--border)] overflow-hidden">
                   {persona.foto ? (
-                    <Image src={persona.foto} alt={persona.nom} fill className="object-cover" />
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={persona.foto} alt={persona.nom} width={90} height={90} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-[var(--muted)] opacity-30" />
                   )}
@@ -87,10 +88,10 @@ export default async function AboutPage() {
           <SmallButton href="https://github.com/microones/lavabos-fib" variant="ghost" external>
             Codi font a GitHub
           </SmallButton>
-					<p className="font-medium text-sm">
-					  Les imatges es poden obtenir a través de 
-						<a href="https://api.lavabos-fib.microones.cat/"> l'API de lavabos-fib </a>.
-					</p>
+          <p className="font-medium text-sm">
+            Les imatges es poden obtenir a través de{" "}
+            <a href="https://api.lavabos-fib.microones.cat/" className="underline hover:text-[var(--primary)]">l&apos;API de lavabos-fib</a>.
+          </p>
         </footer>
       </div>
     </main>

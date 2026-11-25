@@ -1,22 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type Theme = "fib" | "organic";
 
-export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("fib");
+// El tema viu a <html data-theme>, que layout.tsx posa abans de pintar a partir de localStorage.
+const listeners = new Set<() => void>();
+function subscribe(cb: () => void) {
+  listeners.add(cb);
+  return () => listeners.delete(cb);
+}
+const getTheme = (): Theme => (document.documentElement.dataset.theme === "organic" ? "organic" : "fib");
+const getServerTheme = (): Theme => "fib";
 
-  useEffect(() => {
-    const stored = (localStorage.getItem("theme") as Theme) || "fib";
-    setTheme(stored);
-  }, []);
+export default function ThemeToggle() {
+  const theme = useSyncExternalStore(subscribe, getTheme, getServerTheme);
 
   const toggle = () => {
     const next: Theme = theme === "fib" ? "organic" : "fib";
-    setTheme(next);
-    localStorage.setItem("theme", next);
+    try { localStorage.setItem("theme", next); } catch {}
     document.documentElement.dataset.theme = next;
+    listeners.forEach((cb) => cb());
   };
 
   return (
@@ -27,7 +31,7 @@ export default function ThemeToggle() {
     >
       <span
         className="inline-block w-2 h-2 border border-current"
-        style={{ backgroundColor: theme === "fib" ? "var(--primary)" : "var(--primary)" }}
+        style={{ backgroundColor: "var(--primary)" }}
       />
       {theme === "fib" ? "FIB" : "ORGANIC"}
     </button>
