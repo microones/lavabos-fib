@@ -25,6 +25,8 @@ model User {
   updatedAt     DateTime @updatedAt
 
   admin    Boolean @default(false)
+  /// contrasenya provisional: cal canviar-la en entrar
+  mustChangePassword Boolean @default(false)
   username String  @unique
 
   sessions Session[]

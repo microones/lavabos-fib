@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 import SmallButton from "@/components/ui/SmallButton";
+import { LogoutButton } from "@/components/logout-button";
+import { useSession } from "@/lib/client/auth";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -14,8 +16,20 @@ const navLinks = [
   { href: "/about", label: "About" },
 ];
 
+type SessionUser = { admin?: boolean; mustChangePassword?: boolean };
+
+/** Enllaços segons la sessió: Entra, o bé (Contrasenya | Admin) i Surt. */
+function accountLinks(user: SessionUser | null | undefined) {
+  if (!user) return [{ href: "/login", label: "Entra" }];
+  if (user.mustChangePassword) return [{ href: "/compte/contrasenya", label: "Contrasenya" }];
+  return user.admin ? [{ href: "/admin", label: "Admin" }] : [];
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { data: session, isPending } = useSession();
+  const user = session?.user as SessionUser | undefined;
+  const compte = isPending ? [] : accountLinks(user);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[var(--bg)] border-b-2 border-[var(--border)] shadow-sm transition-colors duration-200">
@@ -48,6 +62,12 @@ export default function Navbar() {
               {label}
             </SmallButton>
           ))}
+          {compte.map(({ href, label }) => (
+            <SmallButton key={href} href={href} variant="ghost">
+              {label}
+            </SmallButton>
+          ))}
+          {user && <LogoutButton />}
           <div className="ml-2">
             <ThemeToggle />
           </div>
@@ -87,7 +107,7 @@ export default function Navbar() {
       {open && (
         <nav className="md:hidden border-t border-[var(--border)] bg-[var(--bg)]">
           <ul className="flex flex-col p-4 gap-2">
-            {navLinks.map(({ href, label }) => (
+            {[...navLinks, ...compte].map(({ href, label }) => (
               <li key={href}>
                 <Link
                   href={href}
@@ -98,6 +118,11 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
+            {user && (
+              <li>
+                <LogoutButton onDone={() => setOpen(false)} />
+              </li>
+            )}
             <li className="pt-2">
               <ThemeToggle />
             </li>

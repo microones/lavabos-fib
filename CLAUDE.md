@@ -37,6 +37,8 @@ BETTER_AUTH_URL=http://localhost:3000
 - `src/lib/server/auth.ts` — Better Auth configuration (email/password, custom username generation, admin role)
 - `src/lib/client/auth.ts` — Client-side auth utilities
 - API routes at `/api/auth/[...better-auth]`
+- No hi ha registre públic (`disableSignUp`). Els comptes els crea un admin a `/admin` o, al servidor, `bun run crea-usuari [--admin] correu "Nom"` (`scripts/crea-usuari.ts`), amb una contrasenya aleatòria i `mustChangePassword`: s'ha de canviar a `/compte/contrasenya` abans de poder fer res (`getUserOrThrow` ho comprova). Els admins només es creen amb l'script.
+- `/login`, `/compte/contrasenya`, `/admin` (comptes + gestor de frases). Límit d'intents de Better Auth per IP (nginx ha de passar `X-Forwarded-For`).
 
 ### Frontend
 

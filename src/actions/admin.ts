@@ -53,7 +53,7 @@ export async function updateFrase(id: number, data: FraseUpdateInput) {
         lavaboId,
       }
     });
-    revalidatePath('/admin/frases');
+    revalidatePath('/admin');
     revalidatePath('/frases'); // Actualitza també la pública
     return { success: true };
   } catch (e) {
@@ -68,7 +68,7 @@ export async function deleteFrase(id: number) {
 
   try {
     await prisma.frase.delete({ where: { id } });
-    revalidatePath('/admin/frases');
+    revalidatePath('/admin');
     return { success: true };
   } catch (e) {
     return { success: false, error: String(e) };
@@ -91,7 +91,7 @@ export async function bulkImportFrases(text: string, lavaboId: number) {
 
   try {
     await prisma.frase.createMany({ data: dades });
-    revalidatePath('/admin/frases');
+    revalidatePath('/admin');
     return { success: true, count: dades.length };
   } catch (e) {
     return { success: false, error: String(e) };
