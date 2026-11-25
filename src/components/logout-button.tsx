@@ -1,15 +1,17 @@
 "use client";
 import { authClient } from "@/lib/client/auth";
 import { useRouter } from "next/navigation";
+import SmallButton from "@/components/ui/SmallButton";
 
-export function LogoutButton() {
+export function LogoutButton({ className = "", onDone }: { className?: string; onDone?: () => void }) {
   const router = useRouter();
 
   const handleLogout = async () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/login");
+          onDone?.();
+          router.push("/");
           router.refresh();
         },
       },
@@ -17,11 +19,8 @@ export function LogoutButton() {
   };
 
   return (
-    <button
-      onClick={handleLogout}
-      className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200"
-    >
-      Tancar sessió
-    </button>
+    <SmallButton onClick={handleLogout} variant="ghost" className={className}>
+      Surt
+    </SmallButton>
   );
 }
