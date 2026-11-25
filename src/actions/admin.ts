@@ -97,27 +97,3 @@ export async function bulkImportFrases(text: string, lavaboId: number) {
     return { success: false, error: String(e) };
   }
 }
-
-// --- 4. SQL DIRECTE (PERILLÓS) ---
-export async function executeRawSql(query: string) {
-  await getUserOrThrow({ admin: true });
-
-  try {
-    // queryRawUnsafe permet SQL Injection
-    // Només per a ús intern d'admins
-    const result = await prisma.$queryRawUnsafe(query);
-
-    // Next.js no pot enviar BigInt al client (dóna error de serialització)
-    // Els convertim a string abans de retornar-los
-    const cleanResult = JSON.parse(JSON.stringify(result, (key, value) =>
-      typeof value === 'bigint'
-        ? value.toString()
-        : value
-    ));
-
-    return { success: true, data: cleanResult };
-  } catch (e) {
-    // Retornem l'error de SQL perquè es vegi a la terminal
-    return { success: false, error: e instanceof Error ? e.message : String(e) };
-  }
-}

@@ -10,8 +10,11 @@ async function loadImages(): Promise<YearImages[]> {
       next: { revalidate: 300 },
     });
     if (!res.ok) return [];
-    const { data } = await res.json();
-    return data as YearImages[];
+    const { data } = (await res.json()) as { data: YearImages[] };
+    // Només les fotos amb mides (API nova); un lavabo sense fotos no es mostra
+    return data
+      .map((y) => ({ ...y, buildings: y.buildings.map((b) => ({ ...b, photos: b.photos ?? [] })).filter((b) => b.photos.length) }))
+      .filter((y) => y.buildings.length);
   } catch {
     return [];
   }

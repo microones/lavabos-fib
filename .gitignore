@@ -48,3 +48,6 @@ next-env.d.ts
 .idea
 
 public/img
+
+# miniatures WebP que genera l API (es poden regenerar)
+/fotos/.cache/
