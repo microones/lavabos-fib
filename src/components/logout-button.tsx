@@ -11,7 +11,7 @@ export function LogoutButton({ className = "", onDone }: { className?: string; o
       fetchOptions: {
         onSuccess: () => {
           onDone?.();
-          router.push("/");
+          router.push("/imatges");
           router.refresh();
         },
       },

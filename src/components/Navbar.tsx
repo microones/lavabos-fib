@@ -35,7 +35,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full bg-[var(--bg)] border-b-2 border-[var(--border)] shadow-sm transition-colors duration-200">
       <div className="flex items-center justify-between px-6 py-3 md:px-8 max-w-7xl mx-auto">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href="/imatges" className="flex items-center gap-3 group">
           {/* Sense NEXT_PUBLIC_API_URL (dev sense API) no hi ha logo: next/image peta amb una URL relativa "undefined/..." */}
           {apiUrl && (
             // eslint-disable-next-line @next/next/no-img-element

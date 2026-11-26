@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 // només rutes internes (evita redireccions a altres webs amb ?next=https://...)
 function safeNext(next: string | string[] | undefined) {
-  return typeof next === "string" && next.startsWith("/") && !next.startsWith("//") ? next : "/";
+  return typeof next === "string" && next.startsWith("/") && !next.startsWith("//") ? next : "/imatges";
 }
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string | string[] }> }) {
